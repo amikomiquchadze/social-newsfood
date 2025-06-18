@@ -8,11 +8,11 @@ import { differenceInDays } from "date-fns";
 import { currentUser } from "../../constants/CurrentUser";
 import * as S from "./Dashboard.styled";
 
-import user1 from "../../assets/2.png";
-import user2 from "../../assets/3.png";
-import user3 from "../../assets/4.png";
-import user4 from "../../assets/5.png";
-import user5 from "../../assets/6.png";
+import user1 from "../../assets/user2.png";
+import user2 from "../../assets/user3.png";
+import user3 from "../../assets/user4.png";
+import user4 from "../../assets/user5.png";
+import user5 from "../../assets/user6.png";
 
 export default function Dashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
