@@ -5,5 +5,5 @@ export const Colors = {
     gray: "#535862",
     disabledwhite: "#F5F5F5",
     darkgrey: "#A4A7AE",
-    postmodalplacehodlertext: "#717680"
+    lighgray: "#717680"
 }
