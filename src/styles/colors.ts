@@ -1,0 +1,9 @@
+export const Colors = {
+    white: "#ffff",
+    green: "#32B45F",
+    black: "#181d27",
+    gray: "#535862",
+    disabledwhite: "#F5F5F5",
+    darkgrey: "#A4A7AE",
+    postmodalplacehodlertext: "#717680"
+}

@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-
+import { Colors } from "../../styles/colors";
+const {white, green, black, gray, disabledwhite, darkgrey, postmodalplacehodlertext} = Colors
 export const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -32,7 +33,7 @@ export const Title = styled.span`
   font-family: var(--font-family-display);
   font-weight: 600;
   font-size: 1.2rem;
-  color: #181d27;
+  color: ${black};
 `;
 
 export const CloseButton = styled.button`
@@ -40,7 +41,7 @@ export const CloseButton = styled.button`
   border: none;
   cursor: pointer;
   font-size: 1.2rem;
-  color: #888;
+  color: ${gray};
 `;
 
 export const TextareaWrapper = styled.div`
@@ -55,14 +56,14 @@ export const TextArea = styled.textarea`
   font-family: var(--font-family-body);
   font-weight: 400;
   font-size: 0.95rem;
-  color: #181d27;
+  color:  ${black};
   border: 1px solid #ddd;
   border-radius: 8px;
   resize: vertical;
   outline: none;
 
   &::placeholder {
-    color: #999;
+    color: ${postmodalplacehodlertext};
   }
 `;
 
@@ -107,8 +108,8 @@ export const DeleteIcon = styled.button`
   position: absolute;
   top: 4px;
   right: 4px;
-  background: #000;
-  color: #fff;
+  background: ${black};
+  color: ${white};
   border: none;
   border-radius: 50%;
   font-weight: bold;
@@ -122,8 +123,8 @@ export const DeleteIcon = styled.button`
 
 export const PostButton = styled.button<{ disabled?: boolean }>`
   width: 100%;
-  background-color: ${({ disabled }) => (disabled ? "#ccc" : "#32B45F")};
-  color: white;
+  background-color: ${({ disabled }) => (disabled ? disabledwhite : green)};
+  color:${({ disabled }) => (disabled ? darkgrey : disabledwhite)};
   font-weight: 600;
   padding: 0.8rem 1rem;
   font-size: 1rem;
