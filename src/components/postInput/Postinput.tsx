@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import CreatePostModal from "../createpostmodal/CreatePostModal";
-import { Post } from "../../api/posts";
 import { currentUser } from "../../constants/CurrentUser";
 import * as S from "./postInput.styled";
+import { Post } from "../../api/models/response/post";
 
 interface Props {
   onPostCreate: (post: Post) => void;

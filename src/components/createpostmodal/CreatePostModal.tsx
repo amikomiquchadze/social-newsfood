@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { FiX, FiSmile, FiImage } from "react-icons/fi";
-import { createPost, Post, Base64FileDto } from "../../api/posts";
 import * as S from "./CreatePostModal.styled";
+import { Post } from "../../api/models/response/post";
+import { Base64FileDto, CreatePostPayload } from "../../api/models/payload/post";
+import api from "../../api";
 
 interface Props {
   onClose: () => void;
@@ -54,13 +56,13 @@ export default function CreatePostModal({ onClose, onPostCreate }: Props) {
       });
     }
 
-    const payload = {
+    const payload: CreatePostPayload = {
       Content: content.trim(),
       FilesJson: JSON.stringify(base64Files),
     };
 
     try {
-      const createdPost = await createPost(payload);
+      const createdPost = await api.posts.createPost(payload);
       onPostCreate(createdPost);
       setContent("");
       setFiles([]);

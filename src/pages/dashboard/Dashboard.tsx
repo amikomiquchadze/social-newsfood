@@ -3,7 +3,6 @@ import Greeting from "../../components/greeting/Greeting";
 import PostInput from "../../components/postInput/Postinput";
 import StatsCard from "../../components/statscard/Statscard";
 import PostCard from "../../components/postcard/Postcard";
-import { fetchPosts, deletePost, Post } from "../../api/posts";
 import { differenceInDays } from "date-fns";
 import { currentUser } from "../../constants/CurrentUser";
 import * as S from "./Dashboard.styled";
@@ -13,6 +12,8 @@ import user2 from "../../assets/user3.png";
 import user3 from "../../assets/user4.png";
 import user4 from "../../assets/user5.png";
 import user5 from "../../assets/user6.png";
+import { Post } from "../../api/models/response/post";
+import api from "../../api";
 
 export default function Dashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -25,7 +26,7 @@ export default function Dashboard() {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const data = await fetchPosts();
+        const data = await api.posts.fetchPosts();
         setPosts(data);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -48,7 +49,7 @@ export default function Dashboard() {
 
   const handleDeletePost = async (postId: number) => {
     try {
-      await deletePost(postId);
+      await api.posts.deletePost(postId);
       setPosts((prev) => prev.filter((p) => p.PostID !== postId));
     } catch (err) {
       console.error("Delete failed:", err);
