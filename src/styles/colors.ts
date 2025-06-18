@@ -5,5 +5,7 @@ export const Colors = {
     gray: "#535862",
     disabledwhite: "#F5F5F5",
     darkgrey: "#A4A7AE",
-    lighgray: "#717680"
+    lighgray: "#717680",
+    red: "#D92D20",
+    graytext: "#414651"
 }
