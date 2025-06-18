@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import Greeting from "../../components/Greeting";
+import Greeting from "../../components/greeting/Greeting";
 import PostInput from "../../components/postInput/Postinput";
-import StatsCard from "../../components/Statscard";
-import PostCard from "../../components/Postcard";
+import StatsCard from "../../components/statscard/Statscard";
+import PostCard from "../../components/postcard/Postcard";
 import { fetchPosts, deletePost, Post } from "../../api/posts";
 import { differenceInDays } from "date-fns";
 import { currentUser } from "../../constants/CurrentUser";
 import * as S from "./Dashboard.styled";
-// Static avatars
+
 import user1 from "../../assets/2.png";
 import user2 from "../../assets/3.png";
 import user3 from "../../assets/4.png";
@@ -26,7 +26,6 @@ export default function Dashboard() {
     const loadPosts = async () => {
       try {
         const data = await fetchPosts();
-        console.log("Fetched posts:", data);
         setPosts(data);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
