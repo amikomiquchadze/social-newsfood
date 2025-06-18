@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Colors } from "../../styles/colors";
-const {white, green, black, gray, disabledwhite, darkgrey, postmodalplacehodlertext} = Colors
+const {white, green, black, gray, disabledwhite, darkgrey, lighgray} = Colors
 export const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -63,7 +63,7 @@ export const TextArea = styled.textarea`
   outline: none;
 
   &::placeholder {
-    color: ${postmodalplacehodlertext};
+    color: ${lighgray};
   }
 `;
 

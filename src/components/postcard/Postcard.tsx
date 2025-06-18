@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { FaRegThumbsUp, FaRegComment } from "react-icons/fa";
 import { Post, reactToPost, updatePost } from "../../api/posts";
 import CommentSection, { Comment } from "../commentsection/CommentSection";
-import { ReactionType, reactionOptions } from "../../types/Reactions";
+import { ReactionType, reactionOptions } from "../../utils/Reactions";
 import * as S from "./Postcard.styled";
 import {ReactComponent as EditIcon} from './../../assets/EditIcon.svg';
 import {ReactComponent as DeleteIcon} from './../../assets/TrashIcon.svg';
