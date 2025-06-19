@@ -328,7 +328,7 @@ export default function PostCard({ post, onDelete }: Props) {
       </S.ActionBar>
 
       {showCommentInput && (
-        <CommentSection comments={comments} onAddComment={handleAddComment} />
+        <CommentSection comments={comments} postId={post?.PostID} onAddComment={handleAddComment} />
       )}
     </S.Card>
   );

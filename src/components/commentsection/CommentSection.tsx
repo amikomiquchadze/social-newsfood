@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CommentItem from "../comentitem/CommentItem";
 import * as S from "./CommentSection.styled";
 import api from "../../api";
+import { useUser } from "../../contexts/UserContext";
+import { CreateCommentPayload } from "../../api/rest/comment";
 
 export interface Comment {
-  id: number;
+  id: any;
   postId: number;
   parentId: number | null;
   authorName: string;
@@ -16,32 +18,32 @@ export interface Comment {
 }
 
 interface Props {
-  comments: Comment[]; 
+  comments: Comment[];
   onAddComment?: (content: string, parentId: number | null) => void;
+  postId: number;
 }
 
-export default function CommentSection({ comments, onAddComment }: Props) {
+export default function CommentSection({
+  comments,
+  onAddComment,
+  postId,
+}: Props) {
   const [text, setText] = useState("");
   const [localComments, setLocalComments] = useState<Comment[]>(comments);
-
+  const { currentUser } = useUser();
   const generateSafeID = () => Math.floor(Math.random() * 2_000_000_000);
 
-  const handleSubmit = () => {
-    if (text.trim()) {
-      const newComment: Comment = {
-        id: generateSafeID(),
-        postId: 1, 
-        parentId: null,
-        authorName: "You",
-        authorRole: "Frontend Developer",
-        avatarUrl: "/avatars/you.jpg",
-        content: text.trim(),
-        createdAt: "just now",
+  const handleSubmit = async () => {
+    if (currentUser && text.trim()) {
+      const newComment: CreateCommentPayload = {
+        PostID: postId,
+        Content: text.trim(),
       };
+      await api.comments.createComment(newComment);
 
-      setLocalComments((prev) => [...prev, newComment]);
-      onAddComment?.(text.trim(), null);
-      setText("");
+      // setLocalComments((prev) => [...prev, newComment]);
+      // onAddComment?.(text.trim(), null);
+      // setText("");
     }
   };
 
