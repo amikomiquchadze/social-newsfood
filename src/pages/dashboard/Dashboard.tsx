@@ -20,7 +20,7 @@ import {
   reactionEmojiSource,
   ReactionOptions,
   ReactionType,
-} from "../../utils/Reactions";
+} from "../../utils/reactions";
 import { fetchPosts } from "../../api/rest/post";
 
 export default function Dashboard() {
@@ -64,6 +64,7 @@ export default function Dashboard() {
       setPosts((prev) => [enrichedPost, ...prev]);
     }
   };
+  
   const handleDeletePost = async (postId: number) => {
     try {
       await api.posts.deletePost(postId);

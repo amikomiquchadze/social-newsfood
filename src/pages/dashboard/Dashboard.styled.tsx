@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
+import { Colors } from "../../styles/colors";
+
+const { white } = Colors;
 
 export const DashboardWrapper = styled.div`
-  background-color: #f7f7f7;
+  background-color: ${white};
   min-height: 100vh;
   padding: 2rem;
   display: flex;
@@ -23,16 +26,15 @@ export const RightPanel = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.3rem;
-  width: 200px;
-  min-height: 80px;
+  width: 296px;
+  height: 84px;
 `;
 
 export const Layout = styled.div`
   display: flex;
   justify-content: center;
-  gap: 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
+  gap: 24px;
+  max-width: 872px;
   align-items: flex-start;
 `;
 export const LeftPanel = styled.div`
