@@ -22,3 +22,11 @@ export const deleteComment = async (commentId: number) => {
 
   return response.data;
 };
+
+export const createReply = async (commentId: number, content: string) => {
+  const response = await client.post("/Comment/ReplyCreate", {
+    CommentID: commentId,
+    Content: content,
+  });
+  return response.data;
+};

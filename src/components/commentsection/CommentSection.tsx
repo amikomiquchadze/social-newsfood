@@ -25,19 +25,21 @@ export interface Comment {
 
 interface Props {
   postId: number;
+  postReload: any;
 }
 
-export default function CommentSection({ postId }: Props) {
+export default function CommentSection({ postId, postReload }: Props) {
   const [text, setText] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
   const { currentUser } = useUser();
 
   useEffect(() => {
-
     loadComments();
   }, [postId]);
+
   const loadComments = async () => {
     try {
+      console.log("loadcomm");
       const resp = await api.comments.getCommentsByPostId(postId);
       if (resp) {
         setComments(resp);
@@ -46,6 +48,14 @@ export default function CommentSection({ postId }: Props) {
       console.error("Failed to fetch comments", err);
     }
   };
+
+  //to refetch totalComments on Posts
+  const reloadComments = () => {
+    loadComments();
+    postReload();
+    console.log("section");
+  };
+
   const handleSubmit = async () => {
     if (!text.trim() || !currentUser) return;
 
@@ -66,6 +76,7 @@ export default function CommentSection({ postId }: Props) {
   const handleDeleteComment = async (commentId: number) => {
     try {
       await api.comments.deleteComment(commentId);
+      loadComments();
       setComments((prev) =>
         prev
           .map((comment) => ({
@@ -85,6 +96,7 @@ export default function CommentSection({ postId }: Props) {
         <CommentItem
           key={comment.CommentID}
           comment={comment}
+          onRefresh={reloadComments}
           onDeleteComment={handleDeleteComment}
           onReplySuccess={(newReply, parentId) => {
             setComments((prev) =>

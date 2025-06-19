@@ -18,6 +18,7 @@ interface Props {
   post: Post;
   onDelete: (postId: number) => void;
   reactionOptions: ReactionOptions[];
+  postReload: any;
 }
 
 const validReactions: ReactionType[] = [
@@ -31,7 +32,16 @@ const validReactions: ReactionType[] = [
 const getInitialReaction = (value: any): ReactionType | null => {
   return validReactions.includes(value) ? (value as ReactionType) : null;
 };
-export default function PostCard({ post, onDelete, reactionOptions }: Props) {
+
+export default function PostCard({
+  post,
+  onDelete,
+  reactionOptions,
+  postReload,
+}: Props) {
+  useEffect(() => {
+    console.log("card");
+  }, [postReload]);
   const [expanded, setExpanded] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
   const [userReaction, setUserReaction] = useState<ReactionType | null>(
@@ -255,7 +265,9 @@ export default function PostCard({ post, onDelete, reactionOptions }: Props) {
         </S.Action>
       </S.ActionBar>
 
-      {showCommentInput && <CommentSection postId={post.PostID} />}
+      {showCommentInput && (
+        <CommentSection postId={post.PostID} postReload={postReload} />
+      )}
     </S.Card>
   );
 }
