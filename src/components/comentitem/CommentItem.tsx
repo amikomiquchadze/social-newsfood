@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Comment } from "../commentsection/CommentSection";
 import * as S from "./ComentItem.styled";
-import {ReactComponent as EditIcon} from './../../assets/EditIcon.svg';
-import {ReactComponent as DeleteIcon} from './../../assets/TrashIcon.svg';
+import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
+import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
 
 interface Props {
   comment: Comment;
@@ -11,13 +11,18 @@ interface Props {
   onDeleteComment: (commentId: number) => void;
 }
 
-export default function CommentItem({ comment, comments, onAddReply, onDeleteComment }: Props) {
+export default function CommentItem({
+  comment,
+  comments,
+  onAddReply,
+  onDeleteComment,
+}: Props) {
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [showReplies, setShowReplies] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
+  const [expanded, setExpanded] = useState(false);
   const isReply = comment.parentId !== null;
   const replies = comments.filter((c) => c.parentId === comment.id);
 
@@ -45,35 +50,45 @@ export default function CommentItem({ comment, comments, onAddReply, onDeleteCom
         </div>
 
         {comment.authorName === "You" && (
-  <S.MenuWrapper>
-    <S.DotsButton onClick={() => setMenuOpen((prev) => !prev)}>⋯</S.DotsButton>
-    {menuOpen && (
-      <S.Dropdown>
-                  <S.DropdownItem
-                    onClick={() => {
-                      setIsEditing(true);
-                      setMenuOpen(false);
-                    }}
-                  >
-                    <S.IconPlaceholder>
-                      <EditIcon width={16} height={16} />
-                    </S.IconPlaceholder>{" "}
-                    Edit
-                  </S.DropdownItem>
-                  <S.DropdownItem danger onClick={() => handleDelete(comment.id)}>
-                    <S.IconPlaceholder>
-                      <DeleteIcon width={16} height={16} />
-                    </S.IconPlaceholder>{" "}
-                    Delete
-                  </S.DropdownItem>
-                </S.Dropdown>
-    )}
-  </S.MenuWrapper>
-)}
-
+          <S.MenuWrapper>
+            <S.DotsButton onClick={() => setMenuOpen((prev) => !prev)}>
+              ⋯
+            </S.DotsButton>
+            {menuOpen && (
+              <S.Dropdown>
+                <S.DropdownItem
+                  onClick={() => {
+                    setIsEditing(true);
+                    setMenuOpen(false);
+                  }}
+                >
+                  <S.IconPlaceholder>
+                    <EditIcon width={16} height={16} />
+                  </S.IconPlaceholder>{" "}
+                  Edit
+                </S.DropdownItem>
+                <S.DropdownItem danger onClick={() => handleDelete(comment.id)}>
+                  <S.IconPlaceholder>
+                    <DeleteIcon width={16} height={16} />
+                  </S.IconPlaceholder>{" "}
+                  Delete
+                </S.DropdownItem>
+              </S.Dropdown>
+            )}
+          </S.MenuWrapper>
+        )}
       </S.Header>
 
-      <S.Body>{comment.content}</S.Body>
+      <S.Body>
+        {expanded || comment.content.length <= 100
+          ? comment.content
+          : `${comment.content.slice(0, 100)}... `}
+        {comment.content.length > 100 && (
+          <S.ToggleButton onClick={() => setExpanded(!expanded)}>
+            {expanded ? "See less" : "See more"}
+          </S.ToggleButton>
+        )}
+      </S.Body>
 
       <S.Actions>
         <span>Like</span>

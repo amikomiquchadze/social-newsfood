@@ -31,7 +31,11 @@ export const Role = styled.div`
 `;
 
 export const Body = styled.div`
-  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 0.5rem 0;
 `;
 
 export const Actions = styled.div`
@@ -108,4 +112,11 @@ export const IconPlaceholder = styled.span`
   align-items: center;
   justify-content: center;
   font-size: 1rem;
+`;
+
+export const ToggleButton = styled.span`
+  color: #007bff;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 4px;
 `;
