@@ -1,24 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { FaRegThumbsUp, FaRegComment } from "react-icons/fa";
-import { Post, reactToPost, updatePost } from "../../api/posts";
 import CommentSection, { Comment } from "../commentsection/CommentSection";
-import { ReactionType, reactionOptions } from "../../utils/Reactions";
+import { reactionEmojiSource, ReactionOptions, ReactionType } from "../../utils/Reactions";
 import * as S from "./Postcard.styled";
-import {ReactComponent as EditIcon} from './../../assets/EditIcon.svg';
-import {ReactComponent as DeleteIcon} from './../../assets/TrashIcon.svg';
+import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
+import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
+import api from "../../api";
+import { Post } from "../../api/models/response/post";
 
 interface Props {
   post: Post;
   onDelete: (postId: number) => void;
 }
-
+const validReactions: ReactionType[] = [
+  "LIKE",
+  "LOVE",
+  "LAUGH",
+  "WOW",
+  "SAD",
+  "ANGRY",
+];
+const getInitialReaction = (value: any): ReactionType | null => {
+  return validReactions.includes(value) ? (value as ReactionType) : null;
+};
 export default function PostCard({ post, onDelete }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [reactionOptions, setReactOptions] = useState<ReactionOptions[]>([]);
   const [showReactions, setShowReactions] = useState(false);
   const [userReaction, setUserReaction] = useState<ReactionType | null>(
-    post.UserReaction ?? null
+    getInitialReaction(post.UserReaction)
   );
   const [reactionCounts, setReactionCounts] = useState(post.Reactions);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,7 +61,7 @@ export default function PostCard({ post, onDelete }: Props) {
 
   const handleReact = async (reaction: ReactionType) => {
     try {
-      await reactToPost(post.PostID, reaction);
+      await api.posts.reactToPost(post.PostID, reaction);
       setReactionCounts((prev) => {
         const newCounts = { ...prev };
         if (userReaction && newCounts[userReaction] > 0) {
@@ -69,7 +81,7 @@ export default function PostCard({ post, onDelete }: Props) {
     if (!editContent.trim()) return;
     setLoading(true);
     try {
-      await updatePost(post.PostID, editContent.trim());
+      await api.posts.updatePost(post.PostID, editContent.trim());
       post.Content = editContent;
       setIsEditing(false);
     } catch (err) {
@@ -78,6 +90,31 @@ export default function PostCard({ post, onDelete }: Props) {
       setLoading(false);
     }
   };
+
+  const getReactOptions = async () => {
+    try {
+      const resp = await api.reactions.getReactionTypes();
+      if (resp?.status === 200 || resp?.status === 201) {
+        const serverTypes: ReactionType[] = resp.data;
+  
+        
+        const enriched = serverTypes
+          .map((type) =>
+            reactionEmojiSource.find((r) => r.type === type)
+          )
+          .filter(Boolean) as typeof reactionEmojiSource;
+  
+        setReactOptions(enriched);
+      }
+    } catch (err) {
+      console.error("Fetching failed:", err);
+    }
+  };
+  
+
+  useEffect(() => {
+    getReactOptions();
+  }, []);
 
   return (
     <S.Card>
@@ -100,12 +137,16 @@ export default function PostCard({ post, onDelete }: Props) {
                   setMenuOpen(false);
                 }}
               >
-                <S.IconPlaceholder><EditIcon width={16} height={16} />
-                </S.IconPlaceholder> Edit
+                <S.IconPlaceholder>
+                  <EditIcon width={16} height={16} />
+                </S.IconPlaceholder>{" "}
+                Edit
               </S.DropdownItem>
               <S.DropdownItem danger onClick={() => onDelete(post.PostID)}>
-                <S.IconPlaceholder><DeleteIcon width={16} height={16} />
-                </S.IconPlaceholder> Delete
+                <S.IconPlaceholder>
+                  <DeleteIcon width={16} height={16} />
+                </S.IconPlaceholder>{" "}
+                Delete
               </S.DropdownItem>
             </S.Dropdown>
           )}
@@ -218,7 +259,7 @@ export default function PostCard({ post, onDelete }: Props) {
             src={
               userReaction
                 ? reactionOptions.find((r) => r.type === userReaction)?.emoji
-                : reactionOptions[0].emoji
+                : reactionOptions[0]?.emoji
             }
             alt="reaction"
             style={{ width: 20, height: 20 }}
