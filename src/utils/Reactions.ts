@@ -6,12 +6,12 @@ import sad from "../assets/Crying-Face--Streamline-Noto-Emoji.png";
 import angry from "../assets/Angry-Face--Streamline-Noto-Emoji.png";
 
 export type ReactionType = "LIKE" | "LOVE" | "LAUGH" | "WOW" | "SAD" | "ANGRY";
-
-export const reactionOptions: {
+export interface ReactionOptions {
   type: ReactionType;
-  emoji: string; 
+  emoji: string;
   label: string;
-}[] = [
+}
+export const reactionEmojiSource:ReactionOptions[] = [
   { type: "LIKE", emoji: like, label: "Like" },
   { type: "LOVE", emoji: love, label: "Love" },
   { type: "LAUGH", emoji: laugh, label: "Haha" },
