@@ -3,7 +3,7 @@ import Greeting from "../../components/greeting/Greeting";
 import PostInput from "../../components/postInput/Postinput";
 import StatsCard from "../../components/statscard/Statscard";
 import PostCard from "../../components/postcard/Postcard";
-import PostCardSkeleton from "../../components/postcard/components/PostCardSkeleton";
+import PostCardSkeleton from "../../components/postcard/components/skeleton/PostCardSkeleton";
 import { differenceInDays } from "date-fns";
 import { currentUser } from "../../constants/CurrentUser";
 import * as S from "./Dashboard.styled";
