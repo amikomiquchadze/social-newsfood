@@ -79,16 +79,28 @@ export default function PostCard({
 
   const handleReact = async (reaction: ReactionType) => {
     try {
-      await api.posts.reactToPost(post.PostID, reaction);
-      setReactionCounts((prev) => {
-        const newCounts = { ...prev };
-        if (userReaction && newCounts[userReaction] > 0) {
-          newCounts[userReaction] -= 1;
-        }
-        newCounts[reaction] = (newCounts[reaction] || 0) + 1;
-        return newCounts;
-      });
-      setUserReaction(reaction);
+      if (userReaction === reaction) {
+        await api.reactions.reactToggle(post.PostID, reaction);
+        setReactionCounts((prev) => ({
+          ...prev,
+          [reaction]: Math.max(0, (prev[reaction] || 1) - 1),
+        }));
+        setUserReaction(null);
+      } else {
+        await api.reactions.reactToggle(post.PostID, reaction);
+
+        setReactionCounts((prev) => {
+          const newCounts = { ...prev };
+          if (userReaction && newCounts[userReaction] > 0) {
+            newCounts[userReaction] -= 1;
+          }
+          newCounts[reaction] = (newCounts[reaction] || 0) + 1;
+          return newCounts;
+        });
+
+        setUserReaction(reaction);
+      }
+
       setShowReactions(false);
     } catch (err) {
       console.error("Reaction error", err);

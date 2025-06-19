@@ -17,15 +17,6 @@ export const deletePost = async (postId: number): Promise<void> => {
     PostID: postId,
   });
 };
-export const reactToPost = async (
-  postId: number,
-  reactionType: string
-): Promise<void> => {
-  await client.post("/Post/ReactionToggle", {
-    PostID: postId,
-    ReactionType: reactionType,
-  });
-};
 
 export const updatePost = async (
   postId: number,
