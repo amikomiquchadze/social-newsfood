@@ -5,7 +5,7 @@ export interface CurrentUser {
   UserID: number;
   FirstName: string;
   LastName: string;
-  AvatarUrl?: string | null;
+  AvatarUrl?: string;
 }
 
 interface UserContextType {

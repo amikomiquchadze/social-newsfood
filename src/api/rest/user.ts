@@ -3,7 +3,7 @@ export interface CurrentUser {
   UserID: number;
   FirstName: string;
   LastName: string;
-  AvatarUrl?: string | null;
+  AvatarUrl?: string;
 }
 
 export const getCurrentUser = async (): Promise<CurrentUser | null> => {
