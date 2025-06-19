@@ -7,7 +7,7 @@ export const Card = styled.div`
   background: white;
   border-radius: 12px;
   padding: 1rem;
-  margin-top: 1.2rem;
+  margin-top: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   width: 552px;
 `;
@@ -37,6 +37,9 @@ export const Info = styled.div`
 export const NameRow = styled.div`
   font-weight: bold;
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 `;
 
 export const SubText = styled.div`
@@ -44,6 +47,11 @@ export const SubText = styled.div`
   font-size: 0.8rem;
 `;
 
+export const FormattedDate = styled.span`
+  font-weight: normal;
+  color: ${gray};
+  font-size: 0.8rem;
+`;
 export const MenuWrapper = styled.div`
   position: relative;
 `;

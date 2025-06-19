@@ -6,13 +6,14 @@ import {
   reactionEmojiSource,
   ReactionOptions,
   ReactionType,
-} from "../../utils/Reactions";
+} from "../../utils/reactions";
 import * as S from "./Postcard.styled";
 import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
 import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
 import api from "../../api";
 import { Post } from "../../api/models/response/post";
 import Reactions from "./components/reactions/Reactions";
+import { formatDateTime } from "../../utils/formatDate";
 
 interface Props {
   post: Post;
@@ -72,10 +73,10 @@ export default function PostCard({
     };
   }, []);
   const fullName = `${post.AuthorFirstName} ${post.AuthorLastName}`;
-  const formattedDate = format(
-    new Date(post.CreateTime),
-    "MMM d, yyyy @ HH:mm"
-  );
+//  const formattedDate = format(
+//   new Date("2025-06-16T12:30:56.17"),
+//   "MMM d, yyyy 'at' HH:mm"
+// );
 
   const handleReact = async (reaction: ReactionType) => {
     try {
@@ -126,9 +127,13 @@ export default function PostCard({
       <S.Header>
         <S.AvatarInfo>
           <S.Avatar src={post.AuthorAvatarUrl || "/avatars/default.jpg"} />
+
           <S.Info>
-            <S.NameRow>{fullName}</S.NameRow>
-            <S.SubText>QA Engineer • {formattedDate}</S.SubText>
+            <S.NameRow>
+              <span>{fullName}</span>
+              <S.FormattedDate>• {formatDateTime(post.CreateTime)}</S.FormattedDate>
+            </S.NameRow>
+            <S.SubText>QA Engineer</S.SubText>
           </S.Info>
         </S.AvatarInfo>
 
@@ -222,7 +227,7 @@ export default function PostCard({
         </S.PreviewGrid>
       )}
       <Reactions
-        post={post}
+        id={post.PostID}
         reactionCounts={reactionCounts}
         reactionOptions={reactionOptions}
       />
@@ -278,7 +283,11 @@ export default function PostCard({
       </S.ActionBar>
 
       {showCommentInput && (
-        <CommentSection postId={post.PostID} postReload={postReload} />
+        <CommentSection
+          postId={post.PostID}
+          postReload={postReload}
+          reactionOptions={reactionOptions}
+        />
       )}
     </S.Card>
   );
