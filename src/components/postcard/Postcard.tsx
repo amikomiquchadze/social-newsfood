@@ -12,11 +12,14 @@ import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
 import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
 import api from "../../api";
 import { Post } from "../../api/models/response/post";
-import ReactionViewer from "../postcard/components/reactors/ReactorsViewer";
+import Reactions from "./components/Reactions";
+
 interface Props {
   post: Post;
   onDelete: (postId: number) => void;
+  reactionOptions: ReactionOptions[];
 }
+
 const validReactions: ReactionType[] = [
   "LIKE",
   "LOVE",
@@ -28,10 +31,8 @@ const validReactions: ReactionType[] = [
 const getInitialReaction = (value: any): ReactionType | null => {
   return validReactions.includes(value) ? (value as ReactionType) : null;
 };
-export default function PostCard({ post, onDelete }: Props) {
+export default function PostCard({ post, onDelete, reactionOptions }: Props) {
   const [expanded, setExpanded] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [reactionOptions, setReactOptions] = useState<ReactionOptions[]>([]);
   const [showReactions, setShowReactions] = useState(false);
   const [userReaction, setUserReaction] = useState<ReactionType | null>(
     getInitialReaction(post.UserReaction)
@@ -65,36 +66,6 @@ export default function PostCard({ post, onDelete }: Props) {
     new Date(post.CreateTime),
     "MMM d, yyyy @ HH:mm"
   );
-  console.log("lol");
-
-  const handleAddComment = (content: string, parentId: number | null) => {
-    const newComment: Comment = {
-      CommentID: Date.now(),
-      ParentCommentID: parentId,
-      PostID: post.PostID,
-      AuthorID: 0,
-      AuthorFirstName: "You",
-      AuthorLastName: "",
-      AuthorAvatar: "/avatars/you.jpg",
-      Content: content,
-      CreateTime: new Date().toISOString(),
-      IsAuthor: true,
-      TotalReactions: 0,
-      TotalReplies: 0,
-      UserReaction: null,
-      Reactions: {
-        LIKE: 0,
-        LOVE: 0,
-        LAUGH: 0,
-        WOW: 0,
-        SAD: 0,
-        ANGRY: 0,
-      },
-      Comments: [],
-    };
-
-    setComments((prev) => [...prev, newComment]);
-  };
 
   const handleReact = async (reaction: ReactionType) => {
     try {
@@ -127,27 +98,6 @@ export default function PostCard({ post, onDelete }: Props) {
       setLoading(false);
     }
   };
-
-  const getReactOptions = async () => {
-    try {
-      const resp = await api.reactions.getReactionTypes();
-      if (resp?.status === 200 || resp?.status === 201) {
-        const serverTypes: ReactionType[] = resp.data;
-
-        const enriched = serverTypes
-          .map((type) => reactionEmojiSource.find((r) => r.type === type))
-          .filter(Boolean) as typeof reactionEmojiSource;
-
-        setReactOptions(enriched);
-      }
-    } catch (err) {
-      console.error("Fetching failed:", err);
-    }
-  };
-
-  useEffect(() => {
-    getReactOptions();
-  }, []);
 
   return (
     <S.Card>
@@ -249,50 +199,11 @@ export default function PostCard({ post, onDelete }: Props) {
           })}
         </S.PreviewGrid>
       )}
-
-      <S.MetaRow>
-        <div style={{ position: "relative" }}>
-          <S.Reactions onClick={() => setShowReactionViewer((prev) => !prev)}>
-            {Object.entries(reactionCounts)
-              .filter(([, val]) => val > 0)
-              .slice(0, 3)
-              .map(([key]) => (
-                <S.ReactionEmoji
-                  key={key}
-                  src={reactionOptions.find((r) => r.type === key)?.emoji}
-                  alt={key}
-                />
-              ))}
-            {(() => {
-              const total = Object.values(reactionCounts).reduce(
-                (a, b) => a + b,
-                0
-              );
-              if (total === 1) {
-                return (
-                  <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
-                    Ani
-                  </span>
-                );
-              } else if (total > 1) {
-                return (
-                  <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
-                    Ani and {total - 1} others
-                  </span>
-                );
-              }
-              return null;
-            })()}
-          </S.Reactions>
-
-          {showReactionViewer && (
-            <S.ReactionPopupWrapper ref={popupRef}>
-              <ReactionViewer postId={post.PostID} />
-            </S.ReactionPopupWrapper>
-          )}
-        </div>
-      </S.MetaRow>
-
+      <Reactions
+        post={post}
+        reactionCounts={reactionCounts}
+        reactionOptions={reactionOptions}
+      />
       <S.CommentCount onClick={() => setShowCommentInput((prev) => !prev)}>
         {post.TotalComments} Comment{post.TotalComments !== 1 ? "s" : ""}
       </S.CommentCount>
