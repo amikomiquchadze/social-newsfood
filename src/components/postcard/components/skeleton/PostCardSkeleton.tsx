@@ -1,4 +1,4 @@
-import * as S from "./PostCardSceleton.Styled";
+import * as S from "./PostCardSkeleton.Styled";
 
 export default function PostCardSkeleton() {
   return (
