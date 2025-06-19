@@ -3,6 +3,7 @@ import Greeting from "../../components/greeting/Greeting";
 import PostInput from "../../components/postInput/Postinput";
 import StatsCard from "../../components/statscard/Statscard";
 import PostCard from "../../components/postcard/Postcard";
+import PostCardSkeleton from "../../components/postcard/components/PostCardSkeleton";
 import { differenceInDays } from "date-fns";
 import { currentUser } from "../../constants/CurrentUser";
 import * as S from "./Dashboard.styled";
@@ -12,11 +13,13 @@ import user2 from "../../assets/user3.png";
 import user3 from "../../assets/user4.png";
 import user4 from "../../assets/user5.png";
 import user5 from "../../assets/user6.png";
+
 import { Post } from "../../api/models/response/post";
 import api from "../../api";
 
 export default function Dashboard() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true); // ✅ added loading state
 
   const postsThisWeek = posts.filter((post: Post) => {
     const createdAt = new Date(post.CreateTime);
@@ -30,6 +33,8 @@ export default function Dashboard() {
         setPosts(data);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
+      } finally {
+        setLoading(false); // ✅ stop loading once done
       }
     };
 
@@ -66,7 +71,15 @@ export default function Dashboard() {
         <S.Layout>
           <S.LeftPanel>
             <PostInput onPostCreate={handlePostCreate} />
-            {posts.length === 0 ? (
+
+            {/* ✅ Render loading skeletons, posts, or empty message */}
+            {loading ? (
+              <>
+                <PostCardSkeleton />
+                <PostCardSkeleton />
+                <PostCardSkeleton />
+              </>
+            ) : posts.length === 0 ? (
               <p style={{ color: "#999" }}>No posts yet</p>
             ) : (
               posts.map((post) => (
