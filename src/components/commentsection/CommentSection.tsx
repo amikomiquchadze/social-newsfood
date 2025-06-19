@@ -20,15 +20,20 @@ export interface Comment {
   TotalReplies: number;
   UserReaction: string | null;
   Reactions: Record<string, number>;
-  Comments: Comment[]; // nested replies
+  Comments: Comment[];
 }
 
 interface Props {
   postId: number;
   postReload: any;
+  reactionOptions: any;
 }
 
-export default function CommentSection({ postId, postReload }: Props) {
+export default function CommentSection({
+  postId,
+  postReload,
+  reactionOptions,
+}: Props) {
   const [text, setText] = useState("");
   const [comments, setComments] = useState<Comment[]>([]);
   const { currentUser } = useUser();
@@ -39,7 +44,6 @@ export default function CommentSection({ postId, postReload }: Props) {
 
   const loadComments = async () => {
     try {
-      console.log("loadcomm");
       const resp = await api.comments.getCommentsByPostId(postId);
       if (resp) {
         setComments(resp);
@@ -94,6 +98,7 @@ export default function CommentSection({ postId, postReload }: Props) {
     <S.Section>
       {comments.map((comment) => (
         <CommentItem
+          reactionOptions={reactionOptions}
           key={comment.CommentID}
           comment={comment}
           onRefresh={reloadComments}
@@ -110,12 +115,14 @@ export default function CommentSection({ postId, postReload }: Props) {
         />
       ))}
 
-      <S.Input
-        placeholder="Write your comment"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <S.Button onClick={handleSubmit}>Post</S.Button>
+      <S.CommentBoxWrapper>
+        <S.Input
+          placeholder="Write your comment"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <S.Button onClick={handleSubmit}>Comment</S.Button>
+      </S.CommentBoxWrapper>
     </S.Section>
   );
 }
