@@ -5,7 +5,6 @@ import StatsCard from "../../components/statscard/Statscard";
 import PostCard from "../../components/postcard/Postcard";
 import PostCardSkeleton from "../../components/postcard/components/skeleton/PostCardSkeleton";
 import { differenceInDays } from "date-fns";
-import { currentUser } from "../../constants/CurrentUser";
 import * as S from "./Dashboard.styled";
 
 import user1 from "../../assets/user2.png";
@@ -16,10 +15,12 @@ import user5 from "../../assets/user6.png";
 
 import { Post } from "../../api/models/response/post";
 import api from "../../api";
+import { useUser } from "../../contexts/UserContext";
 
 export default function Dashboard() {
+  const { currentUser } = useUser();
   const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true); // ✅ added loading state
+  const [loading, setLoading] = useState(true);
 
   const postsThisWeek = posts.filter((post: Post) => {
     const createdAt = new Date(post.CreateTime);
@@ -34,7 +35,7 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Failed to fetch posts:", error);
       } finally {
-        setLoading(false); // ✅ stop loading once done
+        setLoading(false);
       }
     };
 
@@ -42,16 +43,17 @@ export default function Dashboard() {
   }, []);
 
   const handlePostCreate = (newPost: Post) => {
-    const enrichedPost: Post = {
-      ...newPost,
-      AuthorID: currentUser.id,
-      AuthorFirstName: currentUser.firstName,
-      AuthorLastName: currentUser.lastName,
-      AuthorAvatarUrl: currentUser.avatarUrl,
-    };
-    setPosts((prev) => [enrichedPost, ...prev]);
+    if (currentUser) {
+      const enrichedPost: Post = {
+        ...newPost,
+        AuthorID: currentUser?.UserID,
+        AuthorFirstName: currentUser?.FirstName,
+        AuthorLastName: currentUser?.LastName,
+        AuthorAvatarUrl: currentUser?.AvatarUrl,
+      };
+      setPosts((prev) => [enrichedPost, ...prev]);
+    }
   };
-
   const handleDeletePost = async (postId: number) => {
     try {
       await api.posts.deletePost(postId);
@@ -65,14 +67,15 @@ export default function Dashboard() {
     <S.DashboardWrapper>
       <S.DashboardContent>
         <S.GreetingWrapper>
-          <Greeting name={currentUser.firstName} />
+          <Greeting
+            name={currentUser?.FirstName ? currentUser?.FirstName : "You"}
+          />
         </S.GreetingWrapper>
 
         <S.Layout>
           <S.LeftPanel>
             <PostInput onPostCreate={handlePostCreate} />
 
-            {/* ✅ Render loading skeletons, posts, or empty message */}
             {loading ? (
               <>
                 <PostCardSkeleton />
