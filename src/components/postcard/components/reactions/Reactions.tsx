@@ -6,12 +6,14 @@ import api from "../../../../api";
 interface ReactionsProps {
   reactionCounts: any;
   reactionOptions: { type: string; emoji: string }[];
-  post: { PostID: number };
+  id?: number;
+  commentId?: number;
 }
 export default function Reactions({
   reactionCounts,
   reactionOptions,
-  post,
+  id,
+  commentId,
 }: ReactionsProps) {
   const [showReactionViewer, setShowReactionViewer] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -34,10 +36,19 @@ export default function Reactions({
   const [reactors, setReactors] = useState<Reactor[]>([]);
 
   const fetchReactors = async () => {
+    const path = id ? "post" : commentId ? "comment" : "";
+    const argID = id || commentId;
+    const payloadProperty = id ? "PostID" : commentId ? "CommentID" : "";
+    if (!path || !argID) return;
     try {
-      const resp = await api.reactions.getReactors(post?.PostID);
+      const resp = await api.reactions.getReactors(
+        argID,
+        path,
+        payloadProperty
+      );
       if (resp) {
         setReactors(resp);
+        console.log("com reactors", resp);
       }
     } catch (err) {
       console.error("Failed to fetch reactors", err);
@@ -46,7 +57,7 @@ export default function Reactions({
 
   useEffect(() => {
     fetchReactors();
-  }, [post.PostID]);
+  }, [id]);
 
   return (
     <>
