@@ -12,13 +12,11 @@ export const DashboardWrapper = styled.div`
 `;
 
 export const DashboardContent = styled.div`
-  width: 100%;
   max-width: 65%;
 `;
 
 export const GreetingWrapper = styled.div`
   width: 552px;
-  margin-left: 90px;
   margin-bottom: 1.5rem;
 `;
 
