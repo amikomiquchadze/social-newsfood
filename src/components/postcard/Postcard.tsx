@@ -69,15 +69,30 @@ export default function PostCard({ post, onDelete }: Props) {
 
   const handleAddComment = (content: string, parentId: number | null) => {
     const newComment: Comment = {
-      id: Date.now(),
-      postId: post.PostID,
-      parentId,
-      authorName: "You",
-      authorRole: "Frontend Developer",
-      avatarUrl: "/avatars/you.jpg",
-      content,
-      createdAt: "just now",
+      CommentID: Date.now(),
+      ParentCommentID: parentId,
+      PostID: post.PostID,
+      AuthorID: 0,
+      AuthorFirstName: "You",
+      AuthorLastName: "",
+      AuthorAvatar: "/avatars/you.jpg",
+      Content: content,
+      CreateTime: new Date().toISOString(),
+      IsAuthor: true,
+      TotalReactions: 0,
+      TotalReplies: 0,
+      UserReaction: null,
+      Reactions: {
+        LIKE: 0,
+        LOVE: 0,
+        LAUGH: 0,
+        WOW: 0,
+        SAD: 0,
+        ANGRY: 0,
+      },
+      Comments: [],
     };
+
     setComments((prev) => [...prev, newComment]);
   };
 
@@ -278,7 +293,9 @@ export default function PostCard({ post, onDelete }: Props) {
         </div>
       </S.MetaRow>
 
-      <div>{post.TotalComments} Comment</div>
+      <S.CommentCount onClick={() => setShowCommentInput((prev) => !prev)}>
+        {post.TotalComments} Comment{post.TotalComments !== 1 ? "s" : ""}
+      </S.CommentCount>
 
       <S.ActionBar>
         <S.Action onClick={() => setShowReactions(!showReactions)}>
@@ -327,9 +344,7 @@ export default function PostCard({ post, onDelete }: Props) {
         </S.Action>
       </S.ActionBar>
 
-      {showCommentInput && (
-        <CommentSection comments={comments} postId={post?.PostID} onAddComment={handleAddComment} />
-      )}
+      {showCommentInput && <CommentSection postId={post.PostID} />}
     </S.Card>
   );
 }

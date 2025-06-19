@@ -194,3 +194,18 @@ export const ReactionEmoji = styled.img`
   vertical-align: middle;
 `;
 
+export const CommentCount = styled.div`
+  cursor: pointer;
+  color: #333;
+  font-size: 0.9rem;
+  margin: 8px 0 4px;
+  font-weight: 500;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #1876f2;
+    text-decoration: underline;
+  }
+`;
+
+

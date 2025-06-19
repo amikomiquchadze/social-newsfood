@@ -1,59 +1,86 @@
 import { useState } from "react";
-import { Comment } from "../commentsection/CommentSection";
 import * as S from "./ComentItem.styled";
-import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
-import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
+import { ReactComponent as EditIcon } from "../../assets/EditIcon.svg";
+import { ReactComponent as DeleteIcon } from "../../assets/TrashIcon.svg";
+
+export interface Comment {
+  CommentID: number;
+  ParentCommentID: number | null;
+  PostID: number;
+  AuthorID: number;
+  AuthorFirstName: string;
+  AuthorLastName: string;
+  AuthorAvatar?: string | null;
+  Content: string;
+  IsAuthor: boolean;
+  TotalReactions: number;
+  TotalReplies: number;
+  UserReaction: string | null;
+  CreateTime: string;
+  Reactions: Record<string, number>;
+  Comments: Comment[];
+}
 
 interface Props {
   comment: Comment;
-  comments: Comment[];
-  onAddReply: (text: string, parentId: number) => void;
   onDeleteComment: (commentId: number) => void;
+  onReplySuccess: (newReply: Comment, parentId: number) => void;
 }
 
-export default function CommentItem({
-  comment,
-  comments,
-  onAddReply,
-  onDeleteComment,
-}: Props) {
+export default function CommentItem({ comment, onDeleteComment, onReplySuccess }: Props) {
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [showReplies, setShowReplies] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const isReply = comment.parentId !== null;
-  const replies = comments.filter((c) => c.parentId === comment.id);
 
-  const handleReply = () => {
+  const handleReply = async () => {
     if (replyText.trim()) {
-      onAddReply(replyText.trim(), comment.id);
+      const newReply: Comment = {
+        ...comment,
+        CommentID: Math.floor(Math.random() * 10000000),
+        ParentCommentID: comment.CommentID,
+        Content: replyText.trim(),
+        Comments: [],
+        CreateTime: new Date().toISOString(),
+        IsAuthor: true,
+        TotalReactions: 0,
+        TotalReplies: 0,
+        UserReaction: null,
+        Reactions: {
+          LIKE: 0,
+          LOVE: 0,
+          LAUGH: 0,
+          WOW: 0,
+          SAD: 0,
+          ANGRY: 0
+        },
+      };
+      onReplySuccess(newReply, comment.CommentID);
       setReplyText("");
       setShowReplyInput(false);
       setShowReplies(true);
     }
   };
 
-  const handleDelete = (commentId: number) => {
-    onDeleteComment(commentId);
+  const handleDelete = () => {
+    onDeleteComment(comment.CommentID);
     setMenuOpen(false);
   };
 
   return (
-    <S.Container level={isReply ? 1 : 0}>
+    <S.Container level={comment.ParentCommentID ? 1 : 0}>
       <S.Header>
-        <S.Avatar src={comment.avatarUrl} />
+        <S.Avatar src={comment.AuthorAvatar || "/avatars/default.jpg"} />
         <div style={{ flex: 1 }}>
-          <S.Author>{comment.authorName}</S.Author>
-          <S.Role>{comment.authorRole}</S.Role>
+          <S.Author>{`${comment.AuthorFirstName} ${comment.AuthorLastName}`}</S.Author>
+          <S.Role>{comment.IsAuthor ? "You" : "User"}</S.Role>
         </div>
 
-        {comment.authorName === "You" && (
+        {comment.IsAuthor && (
           <S.MenuWrapper>
-            <S.DotsButton onClick={() => setMenuOpen((prev) => !prev)}>
-              ⋯
-            </S.DotsButton>
+            <S.DotsButton onClick={() => setMenuOpen((prev) => !prev)}>⋯</S.DotsButton>
             {menuOpen && (
               <S.Dropdown>
                 <S.DropdownItem
@@ -67,7 +94,7 @@ export default function CommentItem({
                   </S.IconPlaceholder>{" "}
                   Edit
                 </S.DropdownItem>
-                <S.DropdownItem danger onClick={() => handleDelete(comment.id)}>
+                <S.DropdownItem danger onClick={handleDelete}>
                   <S.IconPlaceholder>
                     <DeleteIcon width={16} height={16} />
                   </S.IconPlaceholder>{" "}
@@ -80,10 +107,10 @@ export default function CommentItem({
       </S.Header>
 
       <S.Body>
-        {expanded || comment.content.length <= 100
-          ? comment.content
-          : `${comment.content.slice(0, 100)}... `}
-        {comment.content.length > 100 && (
+        {expanded || comment.Content.length <= 100
+          ? comment.Content
+          : `${comment.Content.slice(0, 100)}... `}
+        {comment.Content.length > 100 && (
           <S.ToggleButton onClick={() => setExpanded(!expanded)}>
             {expanded ? "See less" : "See more"}
           </S.ToggleButton>
@@ -105,32 +132,26 @@ export default function CommentItem({
         </>
       )}
 
-      {(isReply || showReplies) && replies.length > 0 && (
-        <>
-          {replies.map((reply) => (
-            <CommentItem
-              key={reply.id}
-              comment={reply}
-              comments={comments}
-              onAddReply={onAddReply}
-              onDeleteComment={onDeleteComment}
-            />
-          ))}
-        </>
+      {comment.Comments?.length > 0 && !showReplies && (
+        <S.ShowRepliesButton onClick={() => setShowReplies(true)}>
+          Show replies ({comment.Comments.length})
+        </S.ShowRepliesButton>
       )}
 
-      {!isReply && replies.length > 0 && (
-        <>
-          {!showReplies ? (
-            <S.ShowRepliesButton onClick={() => setShowReplies(true)}>
-              Show replies ({replies.length})
-            </S.ShowRepliesButton>
-          ) : (
-            <S.ShowRepliesButton onClick={() => setShowReplies(false)}>
-              Hide replies
-            </S.ShowRepliesButton>
-          )}
-        </>
+      {showReplies &&
+        comment.Comments.map((reply) => (
+          <CommentItem
+            key={reply.CommentID}
+            comment={reply}
+            onDeleteComment={onDeleteComment}
+            onReplySuccess={onReplySuccess}
+          />
+        ))}
+
+      {showReplies && comment.Comments?.length > 0 && (
+        <S.ShowRepliesButton onClick={() => setShowReplies(false)}>
+          Hide replies
+        </S.ShowRepliesButton>
       )}
     </S.Container>
   );

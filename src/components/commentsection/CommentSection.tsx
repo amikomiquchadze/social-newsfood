@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommentItem from "../comentitem/CommentItem";
 import * as S from "./CommentSection.styled";
 import api from "../../api";
@@ -6,82 +6,95 @@ import { useUser } from "../../contexts/UserContext";
 import { CreateCommentPayload } from "../../api/rest/comment";
 
 export interface Comment {
-  id: any;
-  postId: number;
-  parentId: number | null;
-  authorName: string;
-  authorRole: string;
-  avatarUrl: string;
-  content: string;
-  createdAt: string;
-  replies?: Comment[];
+  CommentID: number;
+  ParentCommentID: number | null;
+  PostID: number;
+  AuthorID: number;
+  AuthorFirstName: string;
+  AuthorLastName: string;
+  AuthorAvatar?: string | null;
+  Content: string;
+  CreateTime: string;
+  IsAuthor: boolean;
+  TotalReactions: number;
+  TotalReplies: number;
+  UserReaction: string | null;
+  Reactions: Record<string, number>;
+  Comments: Comment[]; // nested replies
 }
 
 interface Props {
-  comments: Comment[];
-  onAddComment?: (content: string, parentId: number | null) => void;
   postId: number;
 }
 
-export default function CommentSection({
-  comments,
-  onAddComment,
-  postId,
-}: Props) {
+export default function CommentSection({ postId }: Props) {
   const [text, setText] = useState("");
-  const [localComments, setLocalComments] = useState<Comment[]>(comments);
+  const [comments, setComments] = useState<Comment[]>([]);
   const { currentUser } = useUser();
-  const generateSafeID = () => Math.floor(Math.random() * 2_000_000_000);
 
-  const handleSubmit = async () => {
-    if (currentUser && text.trim()) {
-      const newComment: CreateCommentPayload = {
-        PostID: postId,
-        Content: text.trim(),
-      };
-      await api.comments.createComment(newComment);
+  useEffect(() => {
 
-      // setLocalComments((prev) => [...prev, newComment]);
-      // onAddComment?.(text.trim(), null);
-      // setText("");
+    loadComments();
+  }, [postId]);
+  const loadComments = async () => {
+    try {
+      const resp = await api.comments.getCommentsByPostId(postId);
+      if (resp) {
+        setComments(resp);
+      }
+    } catch (err) {
+      console.error("Failed to fetch comments", err);
     }
   };
+  const handleSubmit = async () => {
+    if (!text.trim() || !currentUser) return;
 
-  const handleAddReply = (replyText: string, parentId: number) => {
-    const newReply: Comment = {
-      id: generateSafeID(),
-      postId: 1,
-      parentId,
-      authorName: "You",
-      authorRole: "Frontend Developer",
-      avatarUrl: "/avatars/you.jpg",
-      content: replyText,
-      createdAt: "just now",
+    const payload: CreateCommentPayload = {
+      PostID: postId,
+      Content: text.trim(),
     };
 
-    setLocalComments((prev) => [...prev, newReply]);
+    try {
+      await api.comments.createComment(payload);
+      setText("");
+      await loadComments();
+    } catch (err) {
+      console.error("Comment create failed", err);
+    }
   };
 
   const handleDeleteComment = async (commentId: number) => {
     try {
       await api.comments.deleteComment(commentId);
-      setLocalComments((prev) => prev.filter((c) => c.id !== commentId));
+      setComments((prev) =>
+        prev
+          .map((comment) => ({
+            ...comment,
+            Comments: comment.Comments.filter((c) => c.CommentID !== commentId),
+          }))
+          .filter((c) => c.CommentID !== commentId)
+      );
     } catch (err) {
       console.error("Failed to delete comment", err);
     }
   };
 
-  const topLevelComments = localComments.filter((c) => c.parentId === null);
-
   return (
     <S.Section>
-      {topLevelComments.map((comment) => (
+      {comments.map((comment) => (
         <CommentItem
-          key={comment.id}
+          key={comment.CommentID}
           comment={comment}
-          comments={localComments}
-          onAddReply={handleAddReply}
           onDeleteComment={handleDeleteComment}
+          onReplySuccess={(newReply, parentId) => {
+            setComments((prev) =>
+              prev.map((c) =>
+                c.CommentID === parentId
+                  ? { ...c, Comments: [...(c.Comments || []), newReply] }
+                  : c
+              )
+            );
+          }}
         />
       ))}
 
