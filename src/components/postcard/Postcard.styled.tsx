@@ -120,9 +120,10 @@ export const PreviewImage = styled.img`
 `;
 
 export const MetaRow = styled.div`
+  position: relative;
   margin-top: 0.8rem;
   font-size: 0.8rem;
-  color: #777;
+  color: ${black};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -133,6 +134,21 @@ export const Reactions = styled.div`
   align-items: center;
   font-size: 0.85rem;
   gap: 1px;
+  cursor: pointer;
+`;
+
+export const ReactionPopupWrapper = styled.div`
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 10px;
+  background: ${black}; 
+  color: ${black};
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  min-width: 180px;
 `;
 
 export const ActionBar = styled.div`
@@ -158,10 +174,10 @@ export const Action = styled.div`
 
 export const ReactionPopover = styled.div`
   position: absolute;
-  bottom: 100%; 
-  left: 50%; 
+  bottom: 100%;
+  left: 50%;
   transform: translateX(-50%) translateY(-8px);
-  background: white;
+  background: ${black};
   border: 1px solid #ccc;
   padding: 6px 8px;
   border-radius: 30px;
@@ -170,9 +186,11 @@ export const ReactionPopover = styled.div`
   z-index: 999;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 `;
+
 export const ReactionEmoji = styled.img`
   width: 16px;
   height: 16px;
   margin-right: -3px;
   vertical-align: middle;
 `;
+

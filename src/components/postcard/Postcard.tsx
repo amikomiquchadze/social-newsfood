@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import { FaRegThumbsUp, FaRegComment } from "react-icons/fa";
 import CommentSection, { Comment } from "../commentsection/CommentSection";
-import { reactionEmojiSource, ReactionOptions, ReactionType } from "../../utils/Reactions";
+import {
+  reactionEmojiSource,
+  ReactionOptions,
+  ReactionType,
+} from "../../utils/Reactions";
 import * as S from "./Postcard.styled";
 import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
 import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
 import api from "../../api";
 import { Post } from "../../api/models/response/post";
-
+import ReactionViewer from "../postcard/components/reactors/ReactorsViewer";
 interface Props {
   post: Post;
   onDelete: (postId: number) => void;
@@ -38,12 +42,30 @@ export default function PostCard({ post, onDelete }: Props) {
   const [editContent, setEditContent] = useState(post.Content || "");
   const [loading, setLoading] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
+  const [showReactionViewer, setShowReactionViewer] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node)
+      ) {
+        setShowReactionViewer(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   const fullName = `${post.AuthorFirstName} ${post.AuthorLastName}`;
   const formattedDate = format(
     new Date(post.CreateTime),
     "MMM d, yyyy @ HH:mm"
   );
+  console.log("lol");
 
   const handleAddComment = (content: string, parentId: number | null) => {
     const newComment: Comment = {
@@ -96,21 +118,17 @@ export default function PostCard({ post, onDelete }: Props) {
       const resp = await api.reactions.getReactionTypes();
       if (resp?.status === 200 || resp?.status === 201) {
         const serverTypes: ReactionType[] = resp.data;
-  
-        
+
         const enriched = serverTypes
-          .map((type) =>
-            reactionEmojiSource.find((r) => r.type === type)
-          )
+          .map((type) => reactionEmojiSource.find((r) => r.type === type))
           .filter(Boolean) as typeof reactionEmojiSource;
-  
+
         setReactOptions(enriched);
       }
     } catch (err) {
       console.error("Fetching failed:", err);
     }
   };
-  
 
   useEffect(() => {
     getReactOptions();
@@ -218,37 +236,46 @@ export default function PostCard({ post, onDelete }: Props) {
       )}
 
       <S.MetaRow>
-        <S.Reactions>
-          {Object.entries(reactionCounts)
-            .filter(([, val]) => val > 0)
-            .slice(0, 3)
-            .map(([key]) => (
-              <S.ReactionEmoji
-                key={key}
-                src={reactionOptions.find((r) => r.type === key)?.emoji}
-                alt={key}
-              />
-            ))}
+        <div style={{ position: "relative" }}>
+          <S.Reactions onClick={() => setShowReactionViewer((prev) => !prev)}>
+            {Object.entries(reactionCounts)
+              .filter(([, val]) => val > 0)
+              .slice(0, 3)
+              .map(([key]) => (
+                <S.ReactionEmoji
+                  key={key}
+                  src={reactionOptions.find((r) => r.type === key)?.emoji}
+                  alt={key}
+                />
+              ))}
+            {(() => {
+              const total = Object.values(reactionCounts).reduce(
+                (a, b) => a + b,
+                0
+              );
+              if (total === 1) {
+                return (
+                  <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
+                    Ani
+                  </span>
+                );
+              } else if (total > 1) {
+                return (
+                  <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
+                    Ani and {total - 1} others
+                  </span>
+                );
+              }
+              return null;
+            })()}
+          </S.Reactions>
 
-          {(() => {
-            const total = Object.values(reactionCounts).reduce(
-              (a, b) => a + b,
-              0
-            );
-            if (total === 1) {
-              return (
-                <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>Ani</span>
-              );
-            } else if (total > 1) {
-              return (
-                <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
-                  Ani and {total - 1} others
-                </span>
-              );
-            }
-            return null;
-          })()}
-        </S.Reactions>
+          {showReactionViewer && (
+            <S.ReactionPopupWrapper ref={popupRef}>
+              <ReactionViewer postId={post.PostID} />
+            </S.ReactionPopupWrapper>
+          )}
+        </div>
       </S.MetaRow>
 
       <div>{post.TotalComments} Comment</div>
