@@ -3,10 +3,10 @@ import * as S from "./ReactorsViewer.styled";
 import api from "../../../../api";
 
 interface Props {
-  postId: number;
+  reactors: Reactor[];
 }
 
-interface Reactor {
+export interface Reactor {
   UserID: number;
   FirstName: string;
   LastName: string;
@@ -14,28 +14,8 @@ interface Reactor {
   AvatarUrl?: string | null;
 }
 
-export default function ReactionViewer({ postId }: Props) {
-  const [reactors, setReactors] = useState<Reactor[]>([]);
+export default function ReactorsViewer({ reactors }: Props) {
   const [showAll, setShowAll] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-
-  const fetchReactors = async () => {
-    try {
-      const resp = await api.reactions.getReactors(postId);
-      if (resp) {
-        setReactors(resp);
-        setLoaded(true);
-      }
-    } catch (err) {
-      console.error("Failed to fetch reactors", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchReactors();
-  }, [postId]);
-
-  if (!loaded || reactors.length === 0) return null;
 
   return (
     <S.Popup>

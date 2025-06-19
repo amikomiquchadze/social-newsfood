@@ -16,6 +16,11 @@ import user5 from "../../assets/user6.png";
 import { Post } from "../../api/models/response/post";
 import api from "../../api";
 import { useUser } from "../../contexts/UserContext";
+import {
+  reactionEmojiSource,
+  ReactionOptions,
+  ReactionType,
+} from "../../utils/Reactions";
 
 export default function Dashboard() {
   const { currentUser } = useUser();
@@ -40,6 +45,7 @@ export default function Dashboard() {
     };
 
     loadPosts();
+    getReactOptions();
   }, []);
 
   const handlePostCreate = (newPost: Post) => {
@@ -60,6 +66,21 @@ export default function Dashboard() {
       setPosts((prev) => prev.filter((p) => p.PostID !== postId));
     } catch (err) {
       console.error("Delete failed:", err);
+    }
+  };
+  const [reactionOptions, setReactOptions] = useState<ReactionOptions[]>([]);
+
+  const getReactOptions = async () => {
+    try {
+      const resp = await api.reactions.getReactionTypes();
+      const serverTypes: ReactionType[] = resp;
+      const enriched = serverTypes
+        .map((type) => reactionEmojiSource.find((r) => r.type === type))
+        .filter(Boolean) as typeof reactionEmojiSource;
+
+      setReactOptions(enriched);
+    } catch (err) {
+      console.error("Fetching failed:", err);
     }
   };
 
@@ -87,6 +108,7 @@ export default function Dashboard() {
             ) : (
               posts.map((post) => (
                 <PostCard
+                  reactionOptions={reactionOptions}
                   key={post.PostID}
                   post={post}
                   onDelete={handleDeletePost}

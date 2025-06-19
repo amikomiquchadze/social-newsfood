@@ -12,7 +12,7 @@ import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
 import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
 import api from "../../api";
 import { Post } from "../../api/models/response/post";
-import Reactions from "./components/Reactions";
+import Reactions from "./components/reactions/Reactions";
 
 interface Props {
   post: Post;
