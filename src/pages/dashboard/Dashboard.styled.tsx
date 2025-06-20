@@ -12,7 +12,8 @@ export const DashboardWrapper = styled.div`
 `;
 
 export const DashboardContent = styled.div`
-  max-width: 65%;
+  margin-left: 22.08%;
+  margin-right: 17.36%;
 `;
 
 export const GreetingWrapper = styled.div`
