@@ -49,7 +49,6 @@ export default function Reactions({
       );
       if (resp) {
         setReactors(resp);
-        console.log("com reactors", resp);
       }
     } catch (err) {
       console.error("Failed to fetch reactors", err);

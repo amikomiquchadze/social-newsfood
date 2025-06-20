@@ -10,6 +10,8 @@ import {
 import * as S from "./Postcard.styled";
 import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
 import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
+import likeIcon from "./../../assets/thumb up.png";
+import commentIcon from "./../../assets/comment.png";
 import api from "../../api";
 import { Post } from "../../api/models/response/post";
 import Reactions from "../../common/reactions/Reactions";
@@ -19,7 +21,6 @@ interface Props {
   post: Post;
   onDelete: (postId: number) => void;
   reactionOptions: ReactionOptions[];
-  postReload: any;
 }
 
 const validReactions: ReactionType[] = [
@@ -34,15 +35,7 @@ const getInitialReaction = (value: any): ReactionType | null => {
   return validReactions.includes(value) ? (value as ReactionType) : null;
 };
 
-export default function PostCard({
-  post,
-  onDelete,
-  reactionOptions,
-  postReload,
-}: Props) {
-  useEffect(() => {
-    console.log("card");
-  }, [postReload]);
+export default function PostCard({ post, onDelete, reactionOptions }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [showReactions, setShowReactions] = useState(false);
   const [userReaction, setUserReaction] = useState<ReactionType | null>(
@@ -73,10 +66,6 @@ export default function PostCard({
     };
   }, []);
   const fullName = `${post.AuthorFirstName} ${post.AuthorLastName}`;
-//  const formattedDate = format(
-//   new Date("2025-06-16T12:30:56.17"),
-//   "MMM d, yyyy 'at' HH:mm"
-// );
 
   const handleReact = async (reaction: ReactionType) => {
     try {
@@ -131,7 +120,9 @@ export default function PostCard({
           <S.Info>
             <S.NameRow>
               <span>{fullName}</span>
-              <S.FormattedDate>• {formatDateTime(post.CreateTime)}</S.FormattedDate>
+              <S.FormattedDate>
+                • {formatDateTime(post.CreateTime)}
+              </S.FormattedDate>
             </S.NameRow>
             <S.SubText>QA Engineer</S.SubText>
           </S.Info>
@@ -237,15 +228,16 @@ export default function PostCard({
 
       <S.ActionBar>
         <S.Action onClick={() => setShowReactions(!showReactions)}>
-          <img
-            src={
-              userReaction
-                ? reactionOptions.find((r) => r.type === userReaction)?.emoji
-                : reactionOptions[0]?.emoji
-            }
-            alt="reaction"
-            style={{ width: 20, height: 20 }}
-          />
+          {userReaction ? (
+            <img
+              src={reactionOptions.find((r) => r.type === userReaction)?.emoji}
+              alt="reaction"
+              style={{ width: 20, height: 20 }}
+            />
+          ) : (
+            <img src={likeIcon} alt="React" style={{ width: 22, height: 16 }} />
+          )}
+
           {userReaction
             ? reactionOptions.find((r) => r.type === userReaction)?.label
             : "Like"}
@@ -277,7 +269,11 @@ export default function PostCard({
         </S.Action>
 
         <S.Action onClick={() => setShowCommentInput(!showCommentInput)}>
-          <FaRegComment />
+          <img
+            src={commentIcon}
+            alt="Comment"
+            style={{ width: 22, height: 20 }}
+          />
           Comment
         </S.Action>
       </S.ActionBar>
@@ -285,7 +281,6 @@ export default function PostCard({
       {showCommentInput && (
         <CommentSection
           postId={post.PostID}
-          postReload={postReload}
           reactionOptions={reactionOptions}
         />
       )}

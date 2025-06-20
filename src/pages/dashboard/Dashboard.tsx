@@ -24,9 +24,6 @@ import {
 import { fetchPosts } from "../../api/rest/post";
 
 export default function Dashboard() {
-  useEffect(() => {
-    console.log("dash");
-  }, [fetchPosts]);
   const { currentUser } = useUser();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +110,6 @@ export default function Dashboard() {
             ) : (
               posts.map((post) => (
                 <PostCard
-                  postReload={fetchPosts}
                   reactionOptions={reactionOptions}
                   key={post.PostID}
                   post={post}

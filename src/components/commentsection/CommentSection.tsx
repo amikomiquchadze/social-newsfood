@@ -9,13 +9,11 @@ import CommentItem from "./components/comentitem/CommentItem";
 
 interface Props {
   postId: number;
-  postReload: any;
   reactionOptions: any;
 }
 
 export default function CommentSection({
   postId,
-  postReload,
   reactionOptions,
 }: Props) {
   const [text, setText] = useState("");
@@ -40,8 +38,6 @@ export default function CommentSection({
   //to refetch totalComments on Posts
   const reloadComments = () => {
     loadComments();
-    postReload();
-    console.log("section");
   };
 
   const handleSubmit = async () => {
