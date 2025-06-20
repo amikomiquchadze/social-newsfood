@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as S from "./Reactions.styled";
 import ReactorViewer, { Reactor } from "../reactors/ReactorsViewer";
-import api from "../../../../api";
+import api from "../../api";
 
 interface ReactionsProps {
   reactionCounts: any;

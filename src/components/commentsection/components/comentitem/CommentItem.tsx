@@ -1,11 +1,11 @@
 import { useState } from "react";
 import * as S from "./ComentItem.styled";
-import { ReactComponent as EditIcon } from "../../assets/EditIcon.svg";
-import { ReactComponent as DeleteIcon } from "../../assets/TrashIcon.svg";
-import api from "../../api";
-import Reactions from "../postcard/components/reactions/Reactions";
-import { ReactionType } from "../../utils/reactions";
-import { formatShortTimeSince } from "../../utils/formatShortTimeSince";
+import { ReactComponent as EditIcon } from "../../../../assets/EditIcon.svg";
+import { ReactComponent as DeleteIcon } from "../../../../assets/TrashIcon.svg";
+import api from "../../../../api";
+import Reactions from "../../../../common/reactions/Reactions";
+import { ReactionType } from "../../../../utils/reactions";
+import { formatShortTimeSince } from "../../../../utils/formatShortTimeSince";
 
 const validReactions: ReactionType[] = [
   "LIKE",

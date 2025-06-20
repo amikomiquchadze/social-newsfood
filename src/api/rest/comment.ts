@@ -1,9 +1,5 @@
 import client from "../client";
-
-export interface CreateCommentPayload {
-  PostID: number;
-  Content: string;
-}
+import { CreateCommentPayload } from "../models/payload/comment";
 
 export const createComment = async (data: CreateCommentPayload) => {
   const response = await client.post("/Comment/Create", data);

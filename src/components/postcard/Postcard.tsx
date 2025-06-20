@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import { FaRegThumbsUp, FaRegComment } from "react-icons/fa";
-import CommentSection, { Comment } from "../commentsection/CommentSection";
+import CommentSection from "../commentsection/CommentSection";
 import {
   reactionEmojiSource,
   ReactionOptions,
@@ -12,7 +12,7 @@ import { ReactComponent as EditIcon } from "./../../assets/EditIcon.svg";
 import { ReactComponent as DeleteIcon } from "./../../assets/TrashIcon.svg";
 import api from "../../api";
 import { Post } from "../../api/models/response/post";
-import Reactions from "./components/reactions/Reactions";
+import Reactions from "../../common/reactions/Reactions";
 import { formatDateTime } from "../../utils/formatDate";
 
 interface Props {

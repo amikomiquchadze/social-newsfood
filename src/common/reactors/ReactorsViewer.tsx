@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as S from "./ReactorsViewer.styled";
-import api from "../../../../api";
+import api from "../../api";
 
 interface Props {
   reactors: Reactor[];

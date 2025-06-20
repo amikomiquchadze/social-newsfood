@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Colors } from "../../styles/colors";
+import { Colors } from "../../../styles/colors";
 const {white, green, black, gray, disabledwhite, darkgrey, lighgray} = Colors
 export const Overlay = styled.div`
   position: fixed;

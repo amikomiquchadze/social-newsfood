@@ -5,16 +5,6 @@ export interface PostFile {
     FileUrl: string;
   }
   
-  export interface Reactions {
-    LIKE: number;
-    LOVE: number;
-    LAUGH: number;
-    WOW: number;
-    SAD: number;
-    ANGRY: number;
-  }
-
-  
   export interface CreatePostPayload {
     Content: string;
     FilesJson?: string;

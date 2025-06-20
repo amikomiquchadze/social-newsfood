@@ -1,27 +1,11 @@
 import { useEffect, useState } from "react";
-import CommentItem from "../comentitem/CommentItem";
 import * as S from "./CommentSection.styled";
 import api from "../../api";
 import { useUser } from "../../contexts/UserContext";
-import { CreateCommentPayload } from "../../api/rest/comment";
+import { CreateCommentPayload } from "../../api/models/payload/comment";
+import { Comment } from "../../api/models/response/comment";
+import CommentItem from "./components/comentitem/CommentItem";
 
-export interface Comment {
-  CommentID: number;
-  ParentCommentID: number | null;
-  PostID: number;
-  AuthorID: number;
-  AuthorFirstName: string;
-  AuthorLastName: string;
-  AuthorAvatar?: string | null;
-  Content: string;
-  CreateTime: string;
-  IsAuthor: boolean;
-  TotalReactions: number;
-  TotalReplies: number;
-  UserReaction: string | null;
-  Reactions: Record<string, number>;
-  Comments: Comment[];
-}
 
 interface Props {
   postId: number;

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FiX, FiSmile, FiImage } from "react-icons/fi";
 import * as S from "./CreatePostModal.styled";
-import { Post } from "../../api/models/response/post";
-import { Base64FileDto, CreatePostPayload } from "../../api/models/payload/post";
-import api from "../../api";
+import { Post } from "../../../api/models/response/post";
+import { Base64FileDto, CreatePostPayload } from "../../../api/models/payload/post";
+import api from "../../../api";
 
 interface Props {
   onClose: () => void;

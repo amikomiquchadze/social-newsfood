@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Greeting from "../../components/greeting/Greeting";
-import PostInput from "../../components/postInput/Postinput";
+import Greeting from "../../components/topBanner/greeting/Greeting";
+import PostInput from "../../components/topBanner/postInput/Postinput";
 import StatsCard from "../../components/statscard/Statscard";
 import PostCard from "../../components/postcard/Postcard";
 import PostCardSkeleton from "../../components/postcard/components/skeleton/PostCardSkeleton";
