@@ -3,9 +3,11 @@ import { Colors } from "../../../../styles/colors";
 
 const { black } = Colors;
 
-export const MetaRow = styled.div`
+export const MetaRow = styled("div", {
+  shouldForwardProp: (prop) => prop !== "commentId",
+})<{ commentId?: number }>`
   position: relative;
-  margin-top: 0.8rem;
+  margin-top: ${(props) => (props.commentId ? "0px" : "0.8rem")};
   font-size: 0.8rem;
   color: ${black};
   display: flex;

@@ -14,6 +14,7 @@ const validReactions: ReactionType[] = [
   "SAD",
   "ANGRY",
 ];
+
 const getInitialReaction = (value: any): ReactionType | null => {
   return validReactions.includes(value) ? (value as ReactionType) : null;
 };
@@ -212,7 +213,7 @@ export default function CommentItem({
 
         <Reactions
           commentId={comment.CommentID}
-          reactionCounts={20}
+          reactionCounts={reactionCounts}
           reactionOptions={reactionOptions}
         />
         <span onClick={() => setShowReplyInput(!showReplyInput)}>Reply</span>

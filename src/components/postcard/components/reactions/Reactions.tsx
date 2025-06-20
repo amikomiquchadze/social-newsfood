@@ -17,6 +17,7 @@ export default function Reactions({
 }: ReactionsProps) {
   const [showReactionViewer, setShowReactionViewer] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -61,7 +62,7 @@ export default function Reactions({
 
   return (
     <>
-      <S.MetaRow>
+      <S.MetaRow commentId={commentId}>
         <div style={{ position: "relative" }}>
           <S.Reactions
             onClick={() => setShowReactionViewer((prev: any) => !prev)}
@@ -84,6 +85,7 @@ export default function Reactions({
               const total: number = Object.values(
                 reactionCounts as Record<string, number>
               ).reduce((a, b) => a + b, 0);
+              if(id){
               if (total === 1) {
                 return (
                   <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
@@ -95,6 +97,13 @@ export default function Reactions({
                   <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
                     {reactors[0]?.FirstName + " " + reactors[0]?.LastName} and{" "}
                     {total - 1} others
+                  </span>
+                );
+              }}
+              if(commentId){
+                return (
+                  <span style={{ marginLeft: 4, fontSize: "0.85rem" }}>
+                    {total} 
                   </span>
                 );
               }
