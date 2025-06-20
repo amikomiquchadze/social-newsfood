@@ -5,6 +5,7 @@ import { ReactComponent as DeleteIcon } from "../../assets/TrashIcon.svg";
 import api from "../../api";
 import Reactions from "../postcard/components/reactions/Reactions";
 import { ReactionType } from "../../utils/reactions";
+import { formatShortTimeSince } from "../../utils/formatShortTimeSince";
 
 const validReactions: ReactionType[] = [
   "LIKE",
@@ -125,6 +126,7 @@ export default function CommentItem({
           <S.Author>{`${comment.AuthorFirstName} ${comment.AuthorLastName}`}</S.Author>
           <S.Role>{comment.IsAuthor ? "You" : "User"}</S.Role>
         </div>
+        <S.Role>{formatShortTimeSince(comment.CreateTime)}</S.Role>
 
         {comment.IsAuthor && (
           <S.MenuWrapper>
